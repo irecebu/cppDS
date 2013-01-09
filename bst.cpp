@@ -4,7 +4,6 @@ struct tree {
 	int data;
 	struct tree *left;
 	struct tree *right;
-	// struct tree *parent;
 };
 typedef struct tree Tree;
 void add (Tree **r, int data) {
@@ -88,13 +87,35 @@ void remove (Tree **root, int data) {
 			else parent->right  = child->right;
 		}
 	}
-	
+}
+void rotate (Tree **root, bool dir) {
+	if (dir) {//left rotation
+		Tree *new_root = (*root)->right;
+		(*root)->right = new_root->left;
+		new_root->left = (*root);
+		(*root) = new_root; 
+	} else { //right rotation
+		Tree *new_root = (*root)->left;
+		(*root)->left =  new_root->right;
+		new_root->right = *root;
+		(*root) = new_root;
+	}
 }
 void traverse (Tree *root) {
 	if (root != NULL) {
 		traverse(root->left);
 		printf("%d\n", root->data);
 		traverse(root->right);
+	}
+}
+void print(Tree *root, int level) {
+	if (root != NULL) {
+		print(root->left, level+1);
+		for(int i = 0; i < level; i++) {
+			printf("  ");
+		}
+		printf("%d\n",root->data);
+		print(root->right, level+1);
 	}
 }
 int main() {
@@ -117,8 +138,15 @@ int main() {
 	add(&root, 4);
 	printf("*****\n");
 	traverse(root);
-	remove(&root, 2);
+	// remove(&root, 2);
+	// printf("*****\n");
+	// traverse(root);
+	rotate(&root, true);
 	printf("*****\n");
 	traverse(root);
+	rotate(&root, false);
+	printf("*****\n");
+	traverse(root);
+	print(root, 0);
 	return 0;
 }
